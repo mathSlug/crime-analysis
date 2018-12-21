@@ -9,6 +9,7 @@ shinyUI(fluidPage(
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
+      #User parameters
       selectInput("cityChoiceExp", "Choose Observation City:",
                   unique(crimeData$City), selected = crimeData$City[1]),
       selectInput("cityChoiceCont", "Choose Control City:",
@@ -23,6 +24,7 @@ shinyUI(fluidPage(
     
     # Show a plot of the generated distribution
     mainPanel(
+      #Models and descriptions
       textOutput("model1text"),
       tableOutput("model1info"),
       textOutput("model2text"),

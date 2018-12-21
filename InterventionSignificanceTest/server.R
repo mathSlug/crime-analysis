@@ -3,6 +3,7 @@
 shinyServer(function(input, output) {
    
   output$model1info = renderTable({
+    #Calculations to create intervention vector. to-do: wrap in function
     startYear = as.numeric(input$yearIntervention)
     startMonth = as.numeric(input$monthIntervention)
     
@@ -10,18 +11,23 @@ shinyServer(function(input, output) {
     monthDiff = startMonth - min(crimeData$Month)
     
     startID = yearDiff * 12 + monthDiff + 1
+    #Createcolumn for regression, 1 if intervention has been implemented, else 0
     crimeData$intervOn = as.numeric(crimeData$TrendID >= startID)
     
+    #Filter by city choice
     crimeData_this = crimeData %>% filter(., City == input$cityChoiceExp)
-    
-    control = crimeData %>% filter(., City == input$cityChoiceCont)
-    
     
     model1 = arimax(x=select(crimeData_this, input$homsOrGMI),
                    order=c(1,0,0), xreg=crimeData_this$intervOn)
     
     model1coefs = model1$coef
     
+    #calculate p values by:
+    #ratio of absolute value of coeffecient over standard deviation of coeffecient to normalize
+    #integrate normal distribution up to this point, so find "probability"
+    #of observing smaller absolute value of coeffecient.
+    #subtract from one to find probability of observing coeffecient at lease that large
+    #multiply by 2 to get both "tails"
     model1pVals = (1-pnorm(abs(model1$coef)/sqrt(diag(model1$var.coef))))*2
     
     rownames_outTable = c("1-month lagged data", "Intercept", "Intervention in place?")
@@ -49,6 +55,7 @@ shinyServer(function(input, output) {
     
     crimeData_this = crimeData %>% filter(., City == input$cityChoiceExp)
     
+    #get control data for later regression
     control = crimeData %>% filter(., City == input$cityChoiceCont)
     
     model2 = arimax(x=select(crimeData_this, input$homsOrGMI), order=c(1,0,0),
@@ -81,6 +88,7 @@ shinyServer(function(input, output) {
     
     crimeData_this = crimeData %>% filter(., City == input$cityChoiceExp)
     
+    #include cooffenses
     model3 = arimax(x=select(crimeData_this, input$homsOrGMI), order=c(1,0,0),
                    xreg=cbind(crimeData_this$intervOn, crimeData_this$CoOffends))
     
