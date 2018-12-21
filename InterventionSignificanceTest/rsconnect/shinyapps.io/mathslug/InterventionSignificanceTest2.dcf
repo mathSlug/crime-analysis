@@ -1,0 +1,12 @@
+name: InterventionSignificanceTest2
+title: InterventionSignificanceTest2
+username:
+account: mathslug
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 614290
+bundleId: 1756371
+url: https://mathslug.shinyapps.io/InterventionSignificanceTest2/
+when: 1544559645.58119
+asMultiple: FALSE
+asStatic: FALSE
